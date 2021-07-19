@@ -1,0 +1,13 @@
+library(slider)
+library(dplyr)
+library(seqinr)
+library(stringr)
+Plasmid <- read.fasta("E.coli Genome.fasta", as.string = TRUE, seqtype = c("DNA", "AA"), seqonly = TRUE,)
+Positions <- str_locate_all(Plasmid, "GATC")
+PosFrame <- as.data.frame.list(Positions)
+PosFrame <- mutate(PosFrame, distance = start - lag(start))
+PosFrame <- mutate(PosFrame, distance2 = (start -lead(start))*-1)
+PosFrame <- mutate(PosFrame, distance3 = start - lag(start,n=2))
+PosFrame <- mutate(PosFrame, distance4 = (start -lead(start,n=2))*-1)
+
+filter(PosFrame, distance > 350 & distance2 == 10 & distance4 > 350)
